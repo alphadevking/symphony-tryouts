@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ethers, providers } from 'ethers';
+import { ethers } from 'ethers';
 
 interface EthereumWindow extends Window {
-    ethereum?: providers.ExternalProvider;
+    ethereum?: any;
 }
 declare const window: EthereumWindow;
 
@@ -12,7 +12,7 @@ async function connectToMetaMask(): Promise<ethers.Signer> {
     }
 
     await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = provider.getSigner();
     return signer;
 }
@@ -50,13 +50,18 @@ const WalletCard: React.FC = () => {
             .then((address) => {
                 setIsConnected(true);
                 setAccountAddress(address);
-                window.location.reload(); 
+                window.location.reload();
             })
             .catch((error) => console.error('Error connecting to MetaMask:', error));
     };
 
-    const handleDisconnect = () => {
-        window.ethereum?.request({ method: 'wallet_disconnect' });
+    const handleDisconnect = async () => {
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            provider.destroy();
+        }
+        window.location.reload();
     };
 
     return (
