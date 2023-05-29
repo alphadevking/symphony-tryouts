@@ -1,11 +1,17 @@
-import Layout from "@/site/Layout"
-import { WalletConnect } from "@/site/components/WalletConnect"
-import React from "react"
+import WalletCard from "@/sections/WalletCard";
+import Layout from "@/site/Layout";
+import Head from "next/head";
+import React, { useState, useEffect } from "react";
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
-    <Layout>
-      <WalletConnect className="m-3"/>
-    </Layout>
-  )
+    <React.Fragment>
+      <Head>
+        <title>Page</title>
+      </Head>
+      <Layout>
+        <WalletCard/>
+      </Layout>
+    </React.Fragment>
+  );
 }

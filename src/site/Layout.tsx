@@ -1,7 +1,7 @@
 import React from 'react'
-import { AppWrapper, GlobalTypes } from './AppWrapper'
+import AppWrapper, { GlobalTypes } from './AppWrapper'
 
-const Layout:React.FC<GlobalTypes> = ({
+const Layout: React.FC<GlobalTypes> = ({
     children
 }) => {
     return (

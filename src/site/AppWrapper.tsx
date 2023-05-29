@@ -5,12 +5,16 @@ export interface GlobalTypes {
     children?: React.ReactNode;
 }
 
-export const AppWrapper : React.FC<GlobalTypes> = ({
+const AppWrapper: React.FC<GlobalTypes> = ({
     children
 }) => {
     return (
         <main>
-            {children}
+            <div>
+                {children}
+            </div>
         </main>
     )
 }
+
+export default AppWrapper
