@@ -56,14 +56,11 @@ const WalletCard: React.FC = () => {
     };
 
     const handleDisconnect = async () => {
-        if (window.ethereum && window.ethereum.selectedAddress) {
-            await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            provider.destroy();
-        }
-        window.location.reload();
+        setIsConnected(false);
+        setAccountAddress(null);
+        // window.location.reload();
     };
-
+    
     return (
         <div className="min-h-screen justify-center mx-auto w-96 box-border">
             <div className='max-w-fit m-2 py-5 px-5 border rounded-2xl shadow-md text-center'>
