@@ -1,4 +1,5 @@
 import BlockchainReader from "@/sections/BlockchainReader";
+import SolCalculator from "@/sections/SolCalculator";
 import WalletCard from "@/sections/WalletCard";
 import WalletConnect from "@/sections/WalletConnect";
 import Layout from "@/site/Layout";
@@ -16,6 +17,8 @@ export default function Home(): JSX.Element {
         return <BlockchainReader />;
       case "walletConnect":
         return <WalletConnect />;
+      case "solCalculator":
+        return <SolCalculator />;
       default:
         return null;
     }
@@ -48,6 +51,13 @@ export default function Home(): JSX.Element {
             onClick={() => setActiveTab("walletConnect")}
           >
             Wallet Connect
+          </button>
+          <button
+            className={`text-lg font-medium ${activeTab === "solCalculator" ? "text-blue-500" : "text-gray-500"
+              }`}
+            onClick={() => setActiveTab("solCalculator")}
+          >
+            SolCalculator
           </button>
         </div>
         {renderActiveTab()}

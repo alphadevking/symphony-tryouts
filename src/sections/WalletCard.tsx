@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 interface EthereumWindow extends Window {
     ethereum?: any;
 }
+
 declare const window: EthereumWindow;
 
 async function connectToMetaMask(): Promise<ethers.Signer> {
