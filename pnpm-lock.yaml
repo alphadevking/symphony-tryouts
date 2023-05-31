@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@openzeppelin/contracts':
+    specifier: ^4.9.0
+    version: 4.9.0
   '@types/node':
     specifier: 20.1.1
     version: 20.1.1
@@ -759,6 +762,10 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: false
+
+  /@openzeppelin/contracts@4.9.0:
+    resolution: {integrity: sha512-DUP74AFGKlic2sQb/CmgrN2aUPMFGxRrmCTUxLHsiU2RzwWqVuMPZBxiAyvlff6Pea77uylAX6B5x9W6evEbhA==}
     dev: false
 
   /@pedrouid/environment@1.0.1:

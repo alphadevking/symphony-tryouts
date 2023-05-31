@@ -50,7 +50,7 @@ const WalletCard: React.FC = () => {
             .then((address) => {
                 setIsConnected(true);
                 setAccountAddress(address);
-                window.location.reload();
+                // window.location.reload();
             })
             .catch((error) => console.error('Error connecting to MetaMask:', error));
     };
@@ -62,7 +62,7 @@ const WalletCard: React.FC = () => {
     };
     
     return (
-        <div className="min-h-screen justify-center mx-auto w-96 box-border">
+        <div className="justify-center mx-auto w-96 box-border">
             <div className='max-w-fit m-2 py-5 px-5 border rounded-2xl shadow-md text-center'>
                 <h2 className="text-md font-semibold opacity-70 mb-4">Wallet Connect</h2>
                 {isConnected && accountAddress ? (

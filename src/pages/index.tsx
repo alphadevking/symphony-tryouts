@@ -1,3 +1,4 @@
+import BlockchainReader from "@/sections/BlockchainReader";
 import WalletCard from "@/sections/WalletCard";
 import Layout from "@/site/Layout";
 import Head from "next/head";
@@ -10,7 +11,8 @@ export default function Home(): JSX.Element {
         <title>Page</title>
       </Head>
       <Layout>
-        <WalletCard/>
+        {/* <WalletCard/> */}
+        <BlockchainReader/>
       </Layout>
     </React.Fragment>
   );
