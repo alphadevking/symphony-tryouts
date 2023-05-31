@@ -5,7 +5,7 @@ const Layout: React.FC<GlobalTypes> = ({
     children
 }) => {
     return (
-        <AppWrapper>
+        <AppWrapper className='min-h-screen bg-gray-100'>
             {children}
         </AppWrapper>
     )

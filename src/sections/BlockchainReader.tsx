@@ -18,8 +18,8 @@ type Network = {
 };
 
 type Contract = {
-    address: string;
-    abi: any;
+    contract_address: string;
+    contract_abi: any;
 };
 
 // Define the networks and contracts arrays
@@ -42,17 +42,22 @@ const MultiSigWalletAddress = '0xB41aEDb33C6F008Fd95227dDeF28f53D8a7f3A1a';
 const contracts: Contract[] = [
     // Define the contract configurations
     {
-        address: MultiSigWalletAddress,
-        abi: MultiSigWalletABI,
+        contract_address: MultiSigWalletAddress,
+        contract_abi: MultiSigWalletABI,
     },
 ];
 
+const { contract_address, contract_abi } = contracts[0];
+
 // Define the BlockchainReader component
 const BlockchainReader: React.FC = () => {
-    const [error, setError] = useState<string>('');
+    const [error, setError] = useState<string>();
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
     const [balance, setBalance] = useState<BigNumberish | null>(null);
     const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+    const [destination, setDestination] = useState('');
+    const [value, setValue] = useState<string>('');
+    const [data, setData] = useState('');
 
     useEffect(() => {
         if (isWalletConnected && walletAddress) {
@@ -79,11 +84,9 @@ const BlockchainReader: React.FC = () => {
                 setIsWalletConnected(true);
                 setError('');
             } catch (error) {
-                console.log('Error connecting wallet:', error);
-                setError('Error connecting wallet');
+                setError('Error connecting wallet. ' + error);
             }
         } else {
-            console.log('MetaMask not installed!');
             setError('MetaMask is not installed!');
         }
     };
@@ -93,35 +96,115 @@ const BlockchainReader: React.FC = () => {
         setIsWalletConnected(false);
         setBalance(null);
     };
+    
+    const sendEther = async (event: React.FormEvent) => {
+        event.preventDefault()
 
-    const myContract = contracts[0]
+        // Convert the "Data" value to bytes32 format
+        const dataBytes = ethers.formatUnits(data);
+
+        try {
+            // Connect to the Ethereum provider
+            const provider = new ethers.BrowserProvider(window.ethereum)
+            await provider.send('eth_requestAccounts', []);
+
+            // Create a signer and connect to the MultiSigWallet contract
+            const signer = await provider.getSigner()
+            const multiSigWallet = new ethers.Contract(contract_address, contract_abi, signer)
+
+            // Submit the transaction
+            const transaction = await multiSigWallet.submitTransaction(destination, ethers.parseEther(value), dataBytes);
+            console.log('Transaction ID:', transaction.id);
+
+            // Reset the form inputs
+            setDestination('');
+            setValue('');
+            setData('');
+
+        } catch (error) {
+            setError('Error submitting transaction. ' + error)
+        }
+    }
 
     return (
-        <div className="bg-gray-100 p-4">
-            {isWalletConnected ? (
-                <>
-                    <p className="text-gray-700">Wallet Address: {walletAddress}</p>
-                    <p className="text-gray-700">
-                        {balance ? `${ethers.formatEther(balance)} TBNB` : 'Loading balance...'}
-                    </p>
-                    <button
-                        className="bg-pink-500 text-white px-4 py-2 mt-2 rounded"
-                        onClick={handleDisconnectWallet}
-                    >
-                        Disconnect Wallet
-                    </button>
-                </>
-            ) : (
-                <>
-                    <button
-                        className="bg-pink-500 text-white px-4 py-2 rounded"
-                        onClick={handleConnectWallet}
-                    >
-                        Connect Wallet
-                    </button>
-                    <p className="text-gray-700">{error}</p>
-                </>
-            )}
+        <div className="p-4">
+            <div>
+                {isWalletConnected ? (
+                    <>
+                        <p className="text-gray-700">Wallet Address: {walletAddress}</p>
+                        <p className="text-gray-700">
+                            {balance ? `${ethers.formatEther(balance)} TBNB` : 'Loading balance...'}
+                        </p>
+                        <button
+                            className="bg-pink-500 text-white px-4 py-2 mt-2 rounded"
+                            onClick={handleDisconnectWallet}
+                        >
+                            Disconnect Wallet
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button
+                            className="bg-pink-500 text-white px-4 py-2 rounded"
+                            onClick={handleConnectWallet}
+                        >
+                            Connect Wallet
+                        </button>
+                    </>
+                )}
+
+                <div className='my-4'>
+                    <form onSubmit={sendEther} className='grid gap-y-2 max-w-md rounded-2xl px-6 py-5 shadow-2xl backdrop-blur-sm bg-inherit/30'>
+                        <h2 className="text-gray-700 font-bold uppercase text-center py-3">Transfer Test BNB</h2>
+                        <div className='grid gap-x-1'>
+                            <label className="text-gray-700">
+                                Destination:
+                            </label>
+                            <input
+                                type="text"
+                                value={destination}
+                                onChange={(e) => setDestination(e.target.value)}
+                                className="border-gray-300 border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                required
+                            />
+                        </div>
+
+                        <div className='grid gap-x-1'>
+                            <label className="text-gray-700">
+                                Value (TBNB):
+                            </label>
+                            <input
+                                type="text"
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)}
+                                className="border-gray-300 border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                required
+                            />
+                        </div>
+
+                        <div className='grid gap-x-1'>
+                            <label className="text-gray-700">
+                                Data:
+                            </label>
+                            <input
+                                type="text"
+                                value={data}
+                                onChange={(e) => setData(e.target.value)}
+                                className="border-gray-300 border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                // required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="bg-pink-500 text-white px-4 py-2 mt-2 rounded w-fit"
+                        >
+                            Submit Transaction
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p className="text-gray-700 mt-4">{error}</p>
         </div>
     );
 };
