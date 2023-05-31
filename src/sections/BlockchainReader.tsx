@@ -87,7 +87,7 @@ const BlockchainReader: React.FC = () => {
                 setError('Error connecting wallet. ' + error);
             }
         } else {
-            setError('MetaMask is not installed!');
+            setError('Metamask or Trust Wallet not found');
         }
     };
 
@@ -101,7 +101,7 @@ const BlockchainReader: React.FC = () => {
         event.preventDefault()
 
         // Convert the "Data" value to bytes32 format
-        const dataBytes = ethers.formatUnits(data);
+        const dataBytes = ethers.hexlify(ethers.toUtf8Bytes(data));
 
         try {
             // Connect to the Ethereum provider
@@ -204,7 +204,9 @@ const BlockchainReader: React.FC = () => {
                     </form>
                 </div>
             </div>
-            <p className="text-gray-700 mt-4">{error}</p>
+            <div className='box-border max-w-md'>
+                <p className="text-gray-700 mt-4">{error}</p>
+            </div>
         </div>
     );
 };
