@@ -1,151 +1,151 @@
 import { ethers } from 'ethers'
 import React, { useState } from 'react'
-import SolCalculatorABI from '@/utils/abi/SolCalculatorABI.json'
+import contractAbi from '@/utils/abi/SolCalculatorABI.json'
 
-const SolCalculatorCA = '0xd9145CCE52D386f254917e481eB44e9943F39138'
+// BSC Testnet URL
+const providerUrl = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
 
-interface Contract {
-    contract_address: string,
-    contract_abi: any,
+// Instantiate the ethers library
+const provider = new ethers.JsonRpcProvider(providerUrl);
+
+// Your deployed contract address
+const contractAddress = '0xA08B00484ceCB5535427A62Ba1022F6Ab2B4438b';
+
+// Create a contract instance
+const contract = new ethers.Contract(contractAddress, contractAbi, provider);
+
+export const add = async (a: number, b: number) => {
+    const result = await contract.add(a, b);
+    return result;
 }
 
-interface Networks {
-    name: string,
-    chain_id: number,
-    rpcurl: string,
+export const cube = async (a: number) => {
+    const result = await contract.cube(a);
+    return result;
 }
-const contracts: Contract[] = [
-    {
-        contract_address: SolCalculatorCA,
-        contract_abi: SolCalculatorABI,
-    }
-]
 
-const networks: Networks[] = [
-    {
-        name: 'Binance Smart Chain Testnet',
-        chain_id: 97,
-        rpcurl: 'https://bsc-dataseed.binance.org/',
-    }
-]
+export const divide = async (a: number, b: number) => {
+    const result = await contract.divide(a, b);
+    return result;
+}
+
+export const factorial = async (n: number) => {
+    const result = await contract.factorial(n);
+    return result;
+}
+
+export const max = async (a: number, b: number) => {
+    const result = await contract.max(a, b);
+    return result;
+}
+
+export const min = async (a: number, b: number) => {
+    const result = await contract.min(a, b);
+    return result;
+}
+
+export const modulo = async (a: number, b: number) => {
+    const result = await contract.modulo(a, b);
+    return result;
+}
+
+export const multiply = async (a: number, b: number) => {
+    const result = await contract.multiply(a, b);
+    return result;
+}
+
+export const power = async (base: number, exponent: number) => {
+    const result = await contract.power(base, exponent);
+    return result;
+}
+
+export const square = async (a: number) => {
+    const result = await contract.square(a);
+    return result;
+}
+
+export const subtract = async (a: number, b: number) => {
+    const result = await contract.subtract(a, b);
+    return result;
+}
 
 const SolCalculator = () => {
+    const [inputA, setInputA] = useState(0);
+    const [inputB, setInputB] = useState(0);
+    const [result, setResult] = useState(0);
+    const [error, setError] = useState('');
 
-    const [var1, setVar1] = useState<string>('')
-    const [var2, setVar2] = useState<string>('')
-    const [result, setResult] = useState<string>('')
-
-    const [isConnected, setIsConnected] = useState<Boolean>(false)
-    const [address, setAddress] = useState<string>('')
-    const [error, setError] = useState<string | null>(null)
-
-    const initializeWallet = async () => {
+    const performOperation = async (operation: string) => {
         try {
-            const provider = new ethers.BrowserProvider((window as any).ethereum);
-            await provider.send('eth_requestAccounts', []);
-            const signer = await provider.getSigner();
-            const address = await signer.getAddress()
-            setIsConnected(true)
-            setAddress(address)
-        } catch (error) {
-            setError('')
-        }
-    }
-    
-    const handleDisconnect = () => {
-        setAddress('');
-        setIsConnected(false);
-    };
-
-    const handleAdd = async (event: React.FormEvent) => {
-        event.preventDefault()
-
-        // Parse the input values as uint256
-        const input1 = ethers.toBigInt(var1);
-        const input2 = ethers.toBigInt(var2);
-
-        const myContract = contracts[0];
-        const provider = new ethers.BrowserProvider((window as any).ethereum)
-
-        try {
-            await provider.send('eth_requestAccounts', []);
-            const signer = await provider.getSigner()
-            const contract = new ethers.Contract(myContract.contract_address, myContract.contract_abi, signer)
-
-            // Calling the Add function
-            // Submit the transaction
-            const result = await contract.add(input1, input2);
-            alert(ethers.toNumber(result))
-            console.log('Transaction ID:', result.hash);
-        }
-        catch(error) {
-            setError(`${error}`)
+            let res;
+            switch (operation) {
+                case "add":
+                    res = await add(inputA, inputB);
+                    break;
+                case "subtract":
+                    res = await subtract(inputA, inputB);
+                    break;
+                case "multiply":
+                    res = await multiply(inputA, inputB);
+                    break;
+                case "divide":
+                    res = await divide(inputA, inputB);
+                    break;
+                case "modulo":
+                    res = await modulo(inputA, inputB);
+                    break;
+                case "power":
+                    res = await power(inputA, inputB);
+                    break;
+                case "factorial":
+                    res = await factorial(inputA);
+                    break;
+                case "square":
+                    res = await square(inputA);
+                    break;
+                case "cube":
+                    res = await cube(inputA);
+                    break;
+                case "max":
+                    res = await max(inputA, inputB);
+                    break;
+                case "min":
+                    res = await min(inputA, inputB);
+                    break;
+            }
+            // console.log(res)
+            const result = res.toString()
+            setResult(result)
+            // alert(result)
+        } catch (err: any) {
+            // console.log(err.message)
+            setError(err.message)
         }
     }
 
     return (
-        <div>
-            {
-                isConnected ? (
-                    <div>
-                        <div>
-                            <button onClick={handleDisconnect} className='bg-pink-200/30 hover:bg-pink-200/50 px-4 py-2 rounded'>Disconnect Wallet</button>
-                            {
-                                address && (
-                                    <div>Your wallet address is: {address}</div>
-                                )
-                            }
-                        </div>
-                        <div>
-                            <h2 className="text-gray-700 text-lg font-semibold">Sol Calculator</h2>
-                            <form onSubmit={handleAdd} className="mt-4">
-                                <div className="flex gap-x-2">
-                                    <div>
-                                        <label htmlFor="var1" className="text-gray-700">
-                                            Var 1:
-                                        </label>
-                                        <input
-                                            id="var1"
-                                            type="text"
-                                            value={var1}
-                                            onChange={(e) => setVar1(e.target.value)}
-                                            className="border border-gray-300 rounded-md px-3 py-2 mt-1 mx-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="var2" className="text-gray-700">
-                                            Var 2:
-                                        </label>
-                                        <input
-                                            id="var2"
-                                            type="text"
-                                            value={var2}
-                                            onChange={(e) => setVar2(e.target.value)}
-                                            className="border border-gray-300 rounded-md px-3 py-2 mt-1 mx-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="bg-pink-200/30 hover:bg-pink-200/50 px-4 py-2 rounded mt-4"
-                                >
-                                    Add
-                                </button>
-                            </form>
-                        </div>
-
-                    </div>
-                ) : (
-                    <div>
-                        <button onClick={initializeWallet} className='bg-pink-200/30 hover:bg-pink-200/50 px-4 py-2 rounded'>Connect Wallet</button>
-                    </div>
-                )
-            }
+        <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
             <div>{error}</div>
+            <div className="p-6 bg-white shadow-md rounded-md">
+                <input type="number" className="mb-4 p-2 border rounded" value={inputA} onChange={(e) => setInputA(Number(e.target.value))} />
+                <input type="number" className="mb-4 p-2 border rounded" value={inputB} onChange={(e) => setInputB(Number(e.target.value))} />
+                <div>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("add")}>Add</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("subtract")}>Subtract</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("multiply")}>Multiply</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("divide")}>Divide</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("modulo")}>Modulo</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("power")}>Power</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("factorial")}>Factorial</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("square")}>Square</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("cube")}>Cube</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("max")}>Max</button>
+                    <button className="m-2 p-2 bg-blue-500 text-white rounded" onClick={() => performOperation("min")}>Min</button>
+                </div>
+                <div>Result: {result}</div>
+            </div>
         </div>
-    )
+    );
 }
 
 export default SolCalculator

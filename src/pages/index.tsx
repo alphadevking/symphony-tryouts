@@ -1,3 +1,4 @@
+import ArbitrageTest from "@/sections/ArbitrageTest";
 import BlockchainReader from "@/sections/BlockchainReader";
 import SolCalculator from "@/sections/SolCalculator";
 import WalletCard from "@/sections/WalletCard";
@@ -7,10 +8,12 @@ import Head from "next/head";
 import React, { useState } from "react";
 
 export default function Home(): JSX.Element {
-  const [activeTab, setActiveTab] = useState("walletCard");
+  const [activeTab, setActiveTab] = useState("arbitrage");
 
   const renderActiveTab = () => {
     switch (activeTab) {
+      case "arbitrage":
+        return <ArbitrageTest />;
       case "walletCard":
         return <WalletCard />;
       case "blockchainReader":
@@ -31,6 +34,13 @@ export default function Home(): JSX.Element {
       </Head>
       <Layout>
         <div className="flex space-x-4 mb-4">
+          <button
+            className={`text-lg font-medium ${activeTab === "arbitrage" ? "text-blue-500" : "text-gray-500"
+              }`}
+            onClick={() => setActiveTab("arbitrage")}
+          >
+            Arbitrage Test
+          </button>
           <button
             className={`text-lg font-medium ${activeTab === "walletCard" ? "text-blue-500" : "text-gray-500"
               }`}
