@@ -125,7 +125,7 @@ const SolCalculator = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
-            <div>{error}</div>
+            <div className='px-5 md:px-32 text-center text-sm'>{error}</div>
             <div className="p-6 bg-white shadow-md rounded-md">
                 <input type="number" className="mb-4 p-2 border rounded" value={inputA} onChange={(e) => setInputA(Number(e.target.value))} />
                 <input type="number" className="mb-4 p-2 border rounded" value={inputB} onChange={(e) => setInputB(Number(e.target.value))} />
